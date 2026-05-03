@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import movieRoutes from "./routes/movies.js";
+import mongoose from "mongoose";
 
 dotenv.config();
 
@@ -10,6 +11,11 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors({ origin: "http://localhost:5173" }));
 app.use(express.json());
+
+mongoose
+  .connect(process.env.MONGODB_URI)
+  .then(() => console.log("Connected to mongoDB"))
+  .catch((err) => console.log("MongoDB connection error"));
 
 app.use("/api/movies", movieRoutes);
 
