@@ -1,7 +1,9 @@
 import express from "express";
 import Favourite from "../models/Favourite.js";
+import authMiddleware from "../middleware/auth.js";
 
 const router = express.Router();
+router.use(authMiddleware);
 
 // GET /api/favourites — get all favourites
 router.get("/", async (req, res) => {
@@ -25,6 +27,7 @@ router.post("/", async (req, res) => {
     }
 
     const addFavourite = await Favourite.create({
+      userId: req.userId,
       movieId,
       title,
       poster_path,
@@ -49,7 +52,7 @@ router.delete("/:movieId", async (req, res) => {
     if (!deleted) {
       return res.status(404).json({ error: "Movie not found" });
     }
-    
+
     res.json({ message: "Removed from favourites" });
   } catch (err) {
     res.status(500).json({ error: "Failed to remove favourite" });

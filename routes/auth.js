@@ -88,7 +88,8 @@ router.post("/login", async (req, res) => {
           email: user.email,
         },
       });
-  } catch (error) {
+  } catch (err) {
+    console.error("Login error:", err.message);
     res.status(500).json({ error: "Login failed" });
   }
 });
@@ -121,3 +122,5 @@ router.get("/me", async (req, res) => {
     res.status(401).json({ error: "Invalid token" });
   }
 });
+
+export default router;
