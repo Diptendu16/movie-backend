@@ -8,7 +8,9 @@ router.use(authMiddleware);
 // GET /api/favourites — get all favourites
 router.get("/", async (req, res) => {
   try {
-    const favourites = await Favourite.find().sort({ createdAt: -1 });
+    const favourites = await Favourite.find({ userId: req.userId }).sort({
+      createdAt: -1,
+    });
     res.json(favourites);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch favourites" });
@@ -21,7 +23,7 @@ router.post("/", async (req, res) => {
     const { movieId, title, poster_path, vote_average, release_date } =
       req.body;
 
-    const existing = await Favourite.findOne({ movieId });
+    const existing = await Favourite.findOne({ movieId, userId: req.userId });
     if (existing) {
       return res.status(400).json({ error: "Already in favourites" });
     }
@@ -47,6 +49,7 @@ router.delete("/:movieId", async (req, res) => {
     const { movieId } = req.params;
     const deleted = await Favourite.findOneAndDelete({
       movieId: Number(movieId),
+      userId: req.userId,
     });
 
     if (!deleted) {
